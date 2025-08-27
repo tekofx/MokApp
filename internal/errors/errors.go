@@ -44,6 +44,20 @@ func New(code MokuErrorCode, message string) *MokuError {
 	}
 }
 
+func InvalidRequest(message string) *MokuError {
+	return &MokuError{
+		Code:    InvalidRequestErrorCode,
+		Message: message,
+	}
+}
+
+func NotFound(message string) *MokuError {
+	return &MokuError{
+		Code:    NotFoundErrorCode,
+		Message: message,
+	}
+}
+
 func NewAPIError(mokuError *MokuError) *APIError {
 	var status int
 
@@ -82,6 +96,13 @@ const (
 	// 1000 -> 3999 | VALIDATION ERRORS
 	InvalidRequestErrorCode MokuErrorCode = 1000
 
+	// 1100 -> 1299 | ITEM RELATED VALIDATION ERRORS
+	ItemAlreadyExistsErrorCode    MokuErrorCode = 1100
+	ItemAlreadyValidatedErrorCode MokuErrorCode = 1101
+
+	// 4000 -> 4999 | LOOKUP ERRORS
+	NotFoundErrorCode MokuErrorCode = 4000
+
 	// 5000 -> 5999 | AUTHORITATION ERRORS
 	UnauthorizedErrorCode MokuErrorCode = 5000
 )
@@ -100,4 +121,10 @@ const (
 	TokenInvalidMessage string = "invalid token"
 
 	FileTooLargeMessage string = "%s is too long; the maximum size is %dMB"
+
+	// DAL operations
+	ItemInvalidMessage       string = "item cannot be empty"
+	ItemIdNegativeMessage    string = "item id must be greater than 0"
+	ItemNotFoundMessage      string = "item not found"
+	ItemAlreadyExistsMessage string = "item already exists"
 )
