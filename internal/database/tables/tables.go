@@ -34,6 +34,11 @@ func updateTablesForVersion(basePath string, db *sql.DB, currentVersion int, tar
 			return err
 		}
 
+		err = executeScriptIfExists(db, fmt.Sprintf("%s/sql/v%d/data.sql", basePath, version))
+		if nil != err {
+			return err
+		}
+
 	}
 
 	return nil
