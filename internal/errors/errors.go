@@ -71,12 +71,13 @@ type MokuErrorCode int
 
 const (
 	// 0 --> 999 | SYSTEM UNEXPECTED ERRORS
-	UnexpectedErrorCode                 MokuErrorCode = 0
-	DatabaseErrorCode                   MokuErrorCode = 1
-	NotImplementedErrorCode             MokuErrorCode = 2
-	NothingChangedErrorCode             MokuErrorCode = 3
-	CannotGenerateAuthTokenErrorCode    MokuErrorCode = 4
-	CannotCreateValidationCodeErrorCode MokuErrorCode = 5
+	UnexpectedErrorCode                     MokuErrorCode = 0
+	DatabaseErrorCode                       MokuErrorCode = 1
+	NotImplementedErrorCode                 MokuErrorCode = 2
+	NothingChangedErrorCode                 MokuErrorCode = 3
+	CannotGenerateAuthTokenErrorCode        MokuErrorCode = 4
+	CannotCreateValidationCodeErrorCode     MokuErrorCode = 5
+	MissingRequiredConfigParameterErrorCode MokuErrorCode = 6
 
 	// 1000 -> 3999 | VALIDATION ERRORS
 	InvalidRequestErrorCode MokuErrorCode = 1000
@@ -88,11 +89,12 @@ const (
 const (
 	AccessDeniedMessage string = "access denied"
 
-	CannotConnectToDatabaseMessage string = "cannot connect to database"
-	DatabaseConnectionEmptyMessage string = "database connection cannot be empty"
-	ServiceIDEmptyMessage          string = "service id cannot be empty"
-	RegisteredDomainsEmptyMessage  string = "registered domains cannot be empty"
-	SecretEmptyMessage             string = "secret cannot be empty"
+	CannotConnectToDatabaseMessage        string = "cannot connect to database"
+	DatabaseConnectionEmptyMessage        string = "database connection cannot be empty"
+	ServiceIDEmptyMessage                 string = "service id cannot be empty"
+	RegisteredDomainsEmptyMessage         string = "registered domains cannot be empty"
+	SecretEmptyMessage                    string = "secret cannot be empty"
+	MissingRequiredConfigParameterMessage string = "missing config parameter %s"
 
 	TokenEmptyMessage   string = "token cannot be empty"
 	TokenInvalidMessage string = "invalid token"

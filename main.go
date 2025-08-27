@@ -1,11 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"os"
+
+	"github.com/Itros97/MokApp/internal/api"
 )
 
 func main() {
-	fmt.Println("Hello World")
+	api.Start()
 	os.Exit(0)
 }

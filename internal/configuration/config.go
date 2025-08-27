@@ -1,10 +1,12 @@
 package configuration
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strings"
 
+	mokuerrors "github.com/Itros97/MokApp/internal/errors"
 	"github.com/joho/godotenv"
 )
 
@@ -25,7 +27,7 @@ type AppConfiguration struct {
 	JWTRegisteredDomains []string
 }
 
-func LoadConfig(env_file string) AppConfiguration {
+func LoadConfig(env_file string) (*AppConfiguration, *mokuerrors.MokuError) {
 	err := godotenv.Load(env_file)
 	if err != nil {
 		log.Fatal("Error loading .env file: " + err.Error())
@@ -48,7 +50,12 @@ func LoadConfig(env_file string) AppConfiguration {
 	}
 
 	setDefaultVariablesIfNeeded(&config)
-	return config
+	fmt.Println(config.Ip)
+	merr := checkRequiredConfig(&config)
+	if merr != nil {
+		return nil, merr
+	}
+	return &config, nil
 
 }
 func setDefaultVariablesIfNeeded(configuration *AppConfiguration) {
@@ -57,14 +64,23 @@ func setDefaultVariablesIfNeeded(configuration *AppConfiguration) {
 	}
 
 	if configuration.Port == "" {
-		configuration.Ip = "8080"
+		configuration.Port = "8080"
 	}
 
 	if configuration.ApiName == "" {
-		configuration.Ip = "api"
+		configuration.ApiName = "api"
 	}
 
 	if configuration.Version == "" {
-		configuration.Ip = "v1"
+		configuration.Version = "v1"
 	}
+}
+
+func checkRequiredConfig(configuration *AppConfiguration) *mokuerrors.MokuError {
+	if configuration.SumAppToken == "" {
+		return mokuerrors.New(mokuerrors.MissingRequiredConfigParameterErrorCode, fmt.Sprintf(mokuerrors.MissingRequiredConfigParameterMessage, "SUM_APP_TOKEN"))
+	}
+
+	return nil
+
 }
