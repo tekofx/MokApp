@@ -11,8 +11,6 @@ import (
 	"github.com/Itros97/MokApp/internal/logger"
 )
 
-const TestDatabasePath string = "../../.."
-
 func Assert(t *testing.T, predicate bool, failMessage string) {
 	if !predicate {
 		logger.Log("Test failed:", failMessage)
@@ -42,7 +40,7 @@ func NewTestDatabase() (*sql.DB, *mokuerrors.MokuError) {
 		return nil, mokuerrors.New(mokuerrors.DatabaseErrorCode, err.Error())
 	}
 
-	err = tables.UpdateDatabaseTablesToLatestVersion(TestDatabasePath, db)
+	err = tables.UpdateDatabaseTablesToLatestVersion("../..", db)
 	if err != nil {
 		return nil, mokuerrors.New(mokuerrors.DatabaseErrorCode, err.Error())
 	}
