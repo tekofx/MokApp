@@ -47,6 +47,6 @@ func testCreateItem(t *testing.T, db *sql.DB, item *models.Item) {
 			item.Name == obtainedItem.Name &&
 			item.Description == obtainedItem.Description &&
 			item.Stock == obtainedItem.Stock,
-		"expected user and obtained user mismatch",
+		"expected item and obtained item mismatch",
 	)
 }
