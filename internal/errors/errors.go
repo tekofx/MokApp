@@ -18,9 +18,22 @@ func Unexpected(message string) *MokuError {
 		Message: message,
 	}
 }
+func TODO() MokuError {
+	return MokuError{
+		Code:    NotImplementedErrorCode,
+		Message: "Not yet implemented",
+	}
+}
 func Unauthorized(message string) *MokuError {
 	return &MokuError{
 		Code:    UnauthorizedErrorCode,
+		Message: message,
+	}
+}
+
+func DatabaseError(message string) *MokuError {
+	return &MokuError{
+		Code:    InvalidRequestErrorCode,
 		Message: message,
 	}
 }
