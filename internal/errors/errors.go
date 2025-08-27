@@ -1,5 +1,7 @@
 package mokuerrors
 
+import "net/http"
+
 type MokuError struct {
 	Code    MokuErrorCode `json:"code,omitempty"`
 	Message string        `json:"message,omitempty"`
@@ -16,7 +18,12 @@ func Unexpected(message string) *MokuError {
 		Message: message,
 	}
 }
-
+func Unauthorized(message string) *MokuError {
+	return &MokuError{
+		Code:    UnauthorizedErrorCode,
+		Message: message,
+	}
+}
 func New(code MokuErrorCode, message string) *MokuError {
 	return &MokuError{
 		Code:    code,
@@ -24,15 +31,45 @@ func New(code MokuErrorCode, message string) *MokuError {
 	}
 }
 
+func NewAPIError(mokuError *MokuError) *APIError {
+	var status int
+
+	if 0 <= mokuError.Code && mokuError.Code <= 999 {
+		status = http.StatusInternalServerError
+	} else if 1000 <= mokuError.Code && mokuError.Code <= 3999 {
+		status = http.StatusBadRequest
+	} else if 4000 <= mokuError.Code && mokuError.Code <= 4999 {
+		status = http.StatusNotFound
+	} else if 5000 <= mokuError.Code && mokuError.Code <= 5999 {
+		status = http.StatusUnauthorized
+	} else if 6000 <= mokuError.Code && mokuError.Code <= 6999 {
+		status = http.StatusForbidden
+	} else {
+		status = http.StatusTeapot
+	}
+
+	return &APIError{
+		Status:    status,
+		MokuError: *mokuError,
+	}
+}
+
 type MokuErrorCode int
 
 const (
+	// 0 --> 999 | SYSTEM UNEXPECTED ERRORS
 	UnexpectedErrorCode                 MokuErrorCode = 0
 	DatabaseErrorCode                   MokuErrorCode = 1
 	NotImplementedErrorCode             MokuErrorCode = 2
 	NothingChangedErrorCode             MokuErrorCode = 3
 	CannotGenerateAuthTokenErrorCode    MokuErrorCode = 4
 	CannotCreateValidationCodeErrorCode MokuErrorCode = 5
+
+	// 1000 -> 3999 | VALIDATION ERRORS
+	InvalidRequestErrorCode MokuErrorCode = 1000
+
+	// 5000 -> 5999 | AUTHORITATION ERRORS
+	UnauthorizedErrorCode MokuErrorCode = 5000
 )
 
 const (
@@ -48,3 +85,4 @@ const (
 	TokenInvalidMessage string = "invalid token"
 
 	FileTooLargeMessage string = "%s is too long; the maximum size is %dMB"
+)
