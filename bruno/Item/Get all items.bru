@@ -1,0 +1,15 @@
+meta {
+  name: Get all items
+  type: http
+  seq: 3
+}
+
+get {
+  url: http://{{host}}:{{port}}/api/{{version}}/{{endpoints.item}}
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

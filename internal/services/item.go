@@ -41,3 +41,19 @@ func GetItemById(db *sql.DB, id int64) (*models.Item, *mokuerrors.MokuError) {
 	return itemID, nil
 
 }
+
+func GetAllItems(db *sql.DB) ([]*models.Item, *mokuerrors.MokuError) {
+	tx, err := db.Begin()
+	if err != nil {
+		return nil, mokuerrors.DatabaseError(err.Error())
+	}
+
+	defer tx.Rollback()
+
+	items, rerr := dal.GetAllItems(db)
+	if nil != rerr {
+		return nil, rerr
+	}
+
+	return items, nil
+}

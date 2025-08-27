@@ -2,6 +2,7 @@ package dal
 
 import (
 	"database/sql"
+	"fmt"
 
 	mokuerrors "github.com/Itros97/MokApp/internal/errors"
 	"github.com/Itros97/MokApp/internal/models"
@@ -100,5 +101,50 @@ func GetItemById(db *sql.DB, id int64) (*models.Item, *mokuerrors.MokuError) {
 		Description: description,
 		Stock:       stock,
 	}, nil
+
+}
+
+func GetAllItems(db *sql.DB) ([]*models.Item, *mokuerrors.MokuError) {
+	if nil == db {
+		return nil, mokuerrors.Unexpected(mokuerrors.DatabaseConnectionEmptyMessage)
+	}
+
+	statement, err := db.Prepare(`
+		SELECT id,
+			name,
+			description,
+			stock
+		FROM items
+	`)
+
+	if nil != err {
+		return nil, mokuerrors.DatabaseError(err.Error())
+	}
+
+	rows, err := statement.Query()
+
+	if nil != err {
+		return nil, mokuerrors.DatabaseError(err.Error())
+	}
+	defer rows.Close()
+
+	var items []*models.Item
+	for rows.Next() {
+		var item models.Item
+		err := rows.Scan(&item.ID, &item.Name, &item.Description, &item.Stock)
+		if err != nil {
+			return nil, mokuerrors.DatabaseError(err.Error())
+		}
+		items = append(items, &item)
+	}
+
+	// Check for an error encountered during iteration
+	if err = rows.Err(); err != nil {
+		return nil, mokuerrors.DatabaseError(err.Error())
+	}
+
+	fmt.Println(items)
+
+	return items, nil
 
 }

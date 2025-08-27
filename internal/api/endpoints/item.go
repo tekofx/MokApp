@@ -11,15 +11,15 @@ import (
 	"github.com/Itros97/MokApp/internal/utils"
 )
 
-var ItemGetEndpoint = apimodels.Endpoint{
+var ItemGetByIdEndpoint = apimodels.Endpoint{
 	Path:     "items/{id}",
 	Method:   apimodels.GetMethod,
-	Listener: Get,
+	Listener: GetById,
 	Secured:  false,
 	Database: true,
 }
 
-func Get(context *apimodels.APIContext) (*apimodels.Response, *mokuerrors.APIError) {
+func GetById(context *apimodels.APIContext) (*apimodels.Response, *mokuerrors.APIError) {
 	id, err := context.Request.GetParamInt64("id")
 	if err != nil {
 		return nil, mokuerrors.NewAPIError(mokuerrors.InvalidRequest(err.Error()))
@@ -33,6 +33,28 @@ func Get(context *apimodels.APIContext) (*apimodels.Response, *mokuerrors.APIErr
 	return &apimodels.Response{
 		Code:     200,
 		Response: item,
+	}, nil
+
+}
+
+var ItemGetAllpoint = apimodels.Endpoint{
+	Path:     "items",
+	Method:   apimodels.GetMethod,
+	Listener: GetAll,
+	Secured:  false,
+	Database: true,
+}
+
+func GetAll(context *apimodels.APIContext) (*apimodels.Response, *mokuerrors.APIError) {
+
+	items, mokuerr := services.GetAllItems(context.Database)
+	if mokuerr != nil {
+		return nil, mokuerrors.NewAPIError(mokuerr)
+	}
+
+	return &apimodels.Response{
+		Code:     200,
+		Response: items,
 	}, nil
 
 }
