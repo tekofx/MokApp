@@ -13,6 +13,7 @@ import (
 	apimodels "github.com/Itros97/MokApp/internal/api/models"
 	"github.com/Itros97/MokApp/internal/configuration"
 	"github.com/Itros97/MokApp/internal/database"
+	"github.com/Itros97/MokApp/internal/database/tables"
 	mokuerrors "github.com/Itros97/MokApp/internal/errors"
 	"github.com/Itros97/MokApp/internal/logger"
 )
@@ -153,11 +154,27 @@ func applyMiddleware(context *apimodels.APIContext) *mokuerrors.APIError {
 func Start() {
 
 	config, merr := configuration.LoadConfig(".env")
-
 	if merr != nil {
 		fmt.Println(merr.Message)
 		os.Exit(0)
 	}
+	db, err := database.GetConnection()
+	if nil != err {
+		logger.Error(err)
+		return
+	}
+	pwd, err := os.Getwd()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	err = tables.UpdateDatabaseTablesToLatestVersion(pwd, db)
+	if nil != err {
+		logger.Error(err)
+		return
+	}
+	database.Close(db)
 
 	startAPI(config, &endpoints.EndpointRegistry)
 }
