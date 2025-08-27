@@ -50,7 +50,6 @@ func LoadConfig(env_file string) (*AppConfiguration, *mokuerrors.MokuError) {
 	}
 
 	setDefaultVariablesIfNeeded(&config)
-	fmt.Println(config.Ip)
 	merr := checkRequiredConfig(&config)
 	if merr != nil {
 		return nil, merr
