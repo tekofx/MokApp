@@ -12,7 +12,7 @@ import (
 )
 
 var ItemGetEndpoint = apimodels.Endpoint{
-	Path:     "items",
+	Path:     "items/{id}",
 	Method:   apimodels.GetMethod,
 	Listener: Get,
 	Secured:  false,
@@ -20,15 +20,19 @@ var ItemGetEndpoint = apimodels.Endpoint{
 }
 
 func Get(context *apimodels.APIContext) (*apimodels.Response, *mokuerrors.APIError) {
+	id, err := context.Request.GetParamInt64("id")
+	if err != nil {
+		return nil, mokuerrors.NewAPIError(mokuerrors.InvalidRequest(err.Error()))
+	}
+
+	item, mokuerr := services.GetItemById(context.Database, *id)
+	if mokuerr != nil {
+		return nil, mokuerrors.NewAPIError(mokuerr)
+	}
 
 	return &apimodels.Response{
-		Code: 200,
-		Response: models.Item{
-			ID:          1,
-			Name:        "Sticker Miguel",
-			Description: "Miguel woof woof bark",
-			Stock:       1,
-		},
+		Code:     200,
+		Response: item,
 	}, nil
 
 }

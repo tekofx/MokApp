@@ -16,6 +16,10 @@ func CreateItem(db *sql.DB, item *models.Item) (*int64, *mokuerrors.MokuError) {
 		return nil, mokuerrors.InvalidRequest(mokuerrors.ItemInvalidMessage)
 	}
 
+	if item.Name == "" {
+		return nil, mokuerrors.InvalidRequest(mokuerrors.ItemEmptyNameMessage)
+	}
+
 	// Check if item exists
 	itm, itemGetErr := GetItemById(db, item.ID)
 	if nil == itemGetErr && nil != itm {
@@ -63,7 +67,7 @@ func GetItemById(db *sql.DB, id int64) (*models.Item, *mokuerrors.MokuError) {
 		SELECT id,
 			name,
 			description,
-			stock,
+			stock
 		FROM items
 		WHERE id = ?
 	`)
@@ -88,7 +92,7 @@ func GetItemById(db *sql.DB, id int64) (*models.Item, *mokuerrors.MokuError) {
 	var description string
 	var stock int64
 
-	rows.Scan(itemId, name, description, stock)
+	rows.Scan(&itemId, &name, &description, &stock)
 
 	return &models.Item{
 		ID:          itemId,

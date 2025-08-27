@@ -95,6 +95,7 @@ const (
 
 	// 1000 -> 3999 | VALIDATION ERRORS
 	InvalidRequestErrorCode MokuErrorCode = 1000
+	In
 
 	// 1100 -> 1299 | ITEM RELATED VALIDATION ERRORS
 	ItemAlreadyExistsErrorCode    MokuErrorCode = 1100
@@ -127,4 +128,5 @@ const (
 	ItemIdNegativeMessage    string = "item id must be greater than 0"
 	ItemNotFoundMessage      string = "item not found"
 	ItemAlreadyExistsMessage string = "item already exists"
+	ItemEmptyNameMessage     string = "item must have a not empty name"
 )
