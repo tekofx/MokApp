@@ -22,10 +22,6 @@ func CreateItem(db *sql.DB, item *models.Item) (*int64, *mokuerrors.MokuError) {
 		return nil, mokuerrors.New(mokuerrors.ItemAlreadyExistsErrorCode, mokuerrors.ItemAlreadyExistsMessage)
 	}
 
-	if itemGetErr.Code != mokuerrors.NotFoundErrorCode {
-		return nil, itemGetErr
-	}
-
 	statement, err := db.Prepare(
 		"INSERT INTO items(name, description, stock) VALUES(?,?,?)",
 	)
