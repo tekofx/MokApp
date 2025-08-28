@@ -28,10 +28,13 @@ type AppConfiguration struct {
 }
 
 func LoadConfig(env_file string) (*AppConfiguration, *mokuerrors.MokuError) {
-	err := godotenv.Load(env_file)
-	if err != nil {
-		log.Fatal("Error loading .env file: " + err.Error())
+	if os.Getenv("APP_ENV") != "prod" {
+		err := godotenv.Load(env_file)
+		if err != nil {
+			log.Fatal("Error loading .env file: " + err.Error())
+		}
 	}
+
 	config := AppConfiguration{
 		SumAppToken: os.Getenv("SUM_APP_TOKEN"),
 
@@ -55,11 +58,15 @@ func LoadConfig(env_file string) (*AppConfiguration, *mokuerrors.MokuError) {
 		return nil, merr
 	}
 	return &config, nil
-
 }
+
 func setDefaultVariablesIfNeeded(configuration *AppConfiguration) {
 	if configuration.Ip == "" {
-		configuration.Ip = "127.0.0.1"
+		if os.Getenv("APP_ENV") == "prod" {
+			configuration.Ip = "0.0.0.0"
+		} else {
+			configuration.Ip = "127.0.0.1"
+		}
 	}
 
 	if configuration.Port == "" {

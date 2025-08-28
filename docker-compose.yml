@@ -1,0 +1,10 @@
+services:
+  mokapp:
+    container_name: mokapp
+    build: .
+    env_file: .env
+    volumes:
+      - ./mokapp.db:/app/mokapp.db
+    ports:
+      - 8080:8080
+    restart: unless-stopped
