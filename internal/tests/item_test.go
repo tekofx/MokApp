@@ -15,7 +15,7 @@ func TestItemCrud(t *testing.T) {
 	defer db.Close()
 
 	expectedItem := models.Item{
-		Name:        "Item1",
+		Name:        "Item 1",
 		Description: "Item 1 description",
 		Stock:       3,
 		Price:       1.5,
@@ -24,7 +24,7 @@ func TestItemCrud(t *testing.T) {
 	t.Run("Create item validations", func(t *testing.T) { testCreateItemValidations(t, db) })
 	t.Run("Create item", func(t *testing.T) { testCreateItem(t, db, &expectedItem) })
 	t.Run("Get item by id", func(t *testing.T) { testGetItemById(t, db, &expectedItem) })
-	t.Run("Get all items", func(t *testing.T) { testGetItemById(t, db, &expectedItem) })
+	t.Run("Get all items", func(t *testing.T) { testGetAllItems(t, db) })
 }
 
 func testCreateItemValidations(t *testing.T, db *sql.DB) {
@@ -82,12 +82,14 @@ func testGetItemById(t *testing.T, db *sql.DB, item *models.Item) {
 func testGetAllItems(t *testing.T, db *sql.DB) {
 
 	itemId, err := dal.CreateItem(db, &models.Item{
-		Name:        "Item2",
+		Name:        "Item 2",
 		Description: "Item 2 description",
 		Stock:       5,
+		Price:       5.6,
 	})
 
 	AssertMokuErrorDoesNotExist(t, err)
+
 	items, err := dal.GetAllItems(db)
 	Assert(t, len(items) == 2, "Items length != 2")
 	Assert(t, items[0].ID == 1 &&
