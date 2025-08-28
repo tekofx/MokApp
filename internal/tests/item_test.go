@@ -18,6 +18,7 @@ func TestItemCrud(t *testing.T) {
 		Name:        "Item1",
 		Description: "Item 1 description",
 		Stock:       3,
+		Price:       1.5,
 	}
 
 	t.Run("Create item validations", func(t *testing.T) { testCreateItemValidations(t, db) })
@@ -35,6 +36,9 @@ func testCreateItemValidations(t *testing.T, db *sql.DB) {
 
 	_, err = dal.CreateItem(db, &models.Item{})
 	AssertMokuError(t, err, mokuerrors.InvalidRequestErrorCode, mokuerrors.ItemEmptyNameMessage)
+
+	_, err = dal.CreateItem(db, &models.Item{Name: "name"})
+	AssertMokuError(t, err, mokuerrors.InvalidRequestErrorCode, mokuerrors.ItemEmptyPriceMessage)
 }
 
 func testCreateItem(t *testing.T, db *sql.DB, item *models.Item) {
@@ -47,7 +51,8 @@ func testCreateItem(t *testing.T, db *sql.DB, item *models.Item) {
 		nil != obtainedItem &&
 			item.Name == obtainedItem.Name &&
 			item.Description == obtainedItem.Description &&
-			item.Stock == obtainedItem.Stock,
+			item.Stock == obtainedItem.Stock &&
+			item.Price == obtainedItem.Price,
 		"expected item and obtained item mismatch",
 	)
 }

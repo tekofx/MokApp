@@ -2,7 +2,6 @@ package dal
 
 import (
 	"database/sql"
-	"fmt"
 
 	mokuerrors "github.com/Itros97/MokApp/internal/errors"
 	"github.com/Itros97/MokApp/internal/models"
@@ -21,6 +20,10 @@ func CreateItem(db *sql.DB, item *models.Item) (*int64, *mokuerrors.MokuError) {
 		return nil, mokuerrors.InvalidRequest(mokuerrors.ItemEmptyNameMessage)
 	}
 
+	if item.Price == 0 {
+		return nil, mokuerrors.InvalidRequest(mokuerrors.ItemEmptyPriceMessage)
+	}
+
 	// Check if item exists
 	itm, itemGetErr := GetItemById(db, item.ID)
 	if nil == itemGetErr && nil != itm {
@@ -28,7 +31,7 @@ func CreateItem(db *sql.DB, item *models.Item) (*int64, *mokuerrors.MokuError) {
 	}
 
 	statement, err := db.Prepare(
-		"INSERT INTO items(name, description, stock) VALUES(?,?,?)",
+		"INSERT INTO items(name, description, stock, price) VALUES(?,?,?,?)",
 	)
 
 	if nil != err {
@@ -39,6 +42,7 @@ func CreateItem(db *sql.DB, item *models.Item) (*int64, *mokuerrors.MokuError) {
 		item.Name,
 		item.Description,
 		item.Stock,
+		item.Price,
 	)
 
 	if nil != err {
@@ -68,7 +72,8 @@ func GetItemById(db *sql.DB, id int64) (*models.Item, *mokuerrors.MokuError) {
 		SELECT id,
 			name,
 			description,
-			stock
+			stock,
+			price
 		FROM items
 		WHERE id = ?
 	`)
@@ -88,19 +93,11 @@ func GetItemById(db *sql.DB, id int64) (*models.Item, *mokuerrors.MokuError) {
 		return nil, mokuerrors.NotFound(mokuerrors.ItemNotFoundMessage)
 	}
 
-	var itemId int64
-	var name string
-	var description string
-	var stock int64
+	var item models.Item
 
-	rows.Scan(&itemId, &name, &description, &stock)
+	rows.Scan(&item.ID, &item.Name, &item.Description, &item.Stock, &item.Price)
 
-	return &models.Item{
-		ID:          itemId,
-		Name:        name,
-		Description: description,
-		Stock:       stock,
-	}, nil
+	return &item, nil
 
 }
 
@@ -113,7 +110,8 @@ func GetAllItems(db *sql.DB) ([]*models.Item, *mokuerrors.MokuError) {
 		SELECT id,
 			name,
 			description,
-			stock
+			stock,
+			price
 		FROM items
 	`)
 
@@ -131,7 +129,7 @@ func GetAllItems(db *sql.DB) ([]*models.Item, *mokuerrors.MokuError) {
 	var items []*models.Item
 	for rows.Next() {
 		var item models.Item
-		err := rows.Scan(&item.ID, &item.Name, &item.Description, &item.Stock)
+		err := rows.Scan(&item.ID, &item.Name, &item.Description, &item.Stock, &item.Price)
 		if err != nil {
 			return nil, mokuerrors.DatabaseError(err.Error())
 		}
@@ -143,8 +141,5 @@ func GetAllItems(db *sql.DB) ([]*models.Item, *mokuerrors.MokuError) {
 		return nil, mokuerrors.DatabaseError(err.Error())
 	}
 
-	fmt.Println(items)
-
 	return items, nil
-
 }

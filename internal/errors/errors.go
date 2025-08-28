@@ -128,4 +128,5 @@ const (
 	ItemNotFoundMessage      string = "item not found"
 	ItemAlreadyExistsMessage string = "item already exists"
 	ItemEmptyNameMessage     string = "item must have a not empty name"
+	ItemEmptyPriceMessage    string = "item must have non 0 price"
 )
